@@ -10,11 +10,25 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.lab_1.databinding.ActivityMainBinding
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+
+    override fun onStart() {
+        super.onStart()
+
+        Log.i("PGBInfo", "Stopped to Paused")
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        Log.i("PGBInfo", "Paused to Resume")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +46,8 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
+        Log.i("PGBInfo", "From non-existant to stopped.")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
