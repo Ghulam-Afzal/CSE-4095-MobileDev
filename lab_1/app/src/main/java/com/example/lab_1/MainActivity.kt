@@ -10,6 +10,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import com.example.lab_1.databinding.ActivityMainBinding
+
+// import Log from android util
 import android.util.Log
 
 class MainActivity : AppCompatActivity() {
@@ -17,17 +19,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-
+    // override the onStart function to log the app state
     override fun onStart() {
         super.onStart()
 
-        Log.i("PGBInfo", "Stopped to Paused")
+        Log.i("GAAInfo", "Stopped to Paused")
     }
 
+    // override the onResume function to log the app state
     override fun onResume() {
         super.onResume()
 
-        Log.i("PGBInfo", "Paused to Resume")
+        Log.i("GAAInfo", "Paused to Resume")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +50,8 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        Log.i("PGBInfo", "From non-existant to stopped.")
+        // Log that the app has entered the stop state
+        Log.i("GAAInfo", "From non-existent to stopped.")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
