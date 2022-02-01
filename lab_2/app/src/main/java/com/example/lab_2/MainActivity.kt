@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         nextQuestion = findViewById(R.id.next_question)
         questionText = findViewById(R.id.textView2)
 
-        // set onClick listeners for the buttons 
+        // set onClick listeners for the buttons
         trueButton?.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?){
                 Toast.makeText(baseContext, "Clicked True Button", Toast.LENGTH_SHORT).show()
