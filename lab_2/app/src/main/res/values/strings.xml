@@ -1,7 +1,18 @@
 <resources>
-    <string name="app_name">lab_2</string>
+    <string name="app_name">Skyrim Answer Quiz</string>
 
-    <string name="q1">There are 7 seas</string>
-    <string name="q2">There are 10 continents</string>
-    <string name="q3">3+5 = 11</string>
+    <string name="q1"> The Dark Brotherhood Sanctuary Is Located Near Falkreath</string>
+    <string name="q2">The Final Event In The Prophecy Is A Schism</string>
+    <string name="q3">In The Mage-Style Gameplay There Are 5 Skill Paths.</string>
+    <string name="q4">There Are Ten Races In Tamriel</string>
+    <string name="q5">The Bretons Are Native To Skyrim</string>
+    <string name="q6">Skyrim Is Bethesdas Biggest Elder Scrolls Game Map</string>
+    <string name="q7">Troll Skulls Are Harvested From Dead Trolls</string>
+    <string name="q8">There Is A Talking Dog</string>
+    <string name="q9">Stendarr Is The God Of Mercy</string>
+    <string name="q10">Dwemer Translates To "Deep Elves"</string>
+
+
+
+
 </resources>
