@@ -42,13 +42,14 @@ class MainActivity : AppCompatActivity() {
 
         buttonToScoreActivity.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
-
                 Intent(baseContext, ScoreActivity::class.java).also { scoreActivity ->
                     scoreActivity.putExtra("FROM_MAIN", score.toString())
                     startActivity(scoreActivity)
 
                 }
+                total_score.reset()
             }
+
         })
 
         // attach the vars to the correct item on the view using ids
@@ -100,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
         nextButton?.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
+                score = total_score.skip_q()
+                scoreText?.setText("Score: $score")
                 val nextQuestionIndex = nextQuestion.linearNextQuestion()
                 questionText?.setText(nextQuestionIndex)
                 Toast.makeText(baseContext, "Clicked NEXT", Toast.LENGTH_SHORT).show()

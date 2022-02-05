@@ -5,13 +5,26 @@ class Score {
     private var score: Int = 0
 
     fun inc(): Int {
-        score += 1
+        score += 5
         return score
     }
 
     fun dec(): Int {
-        score -= 1
+        if (score > 0) {
+            score -= 5
+        }
         return score
     }
 
+    fun skip_q(): Int {
+        if (score > 0){
+            score -= 10
+        }
+        return score
+    }
+
+    fun reset():Int {
+        score = 0
+        return score
+    }
 }
