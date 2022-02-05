@@ -3,13 +3,14 @@ package com.example.lab_2
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.lab_2.contollers.NextQuestion
 import com.example.lab_2.model.AllQuestions
-import android.widget.EditText
+import com.example.lab_2.model.Score
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,30 +20,31 @@ class MainActivity : AppCompatActivity() {
     var falseButton: Button? = null
     var nextButton: Button? = null
     var questionText: TextView? = null
+    var scoreText: TextView? = null
+    var score: Int? = 0
 
     val nextQuestion: NextQuestion = NextQuestion()
 
-    private val toScoreActivity: EditText
-        get() = findViewById(R.id.to_score_activity)
+//    private val toScoreActivity: EditText
+//        get() = findViewById(R.id.to_score_activity)
 
     private val buttonToScoreActivity: Button
         get() = findViewById(R.id.button_to_ScoreActivity)
 
+    var total_score: Score = Score()
+
+    var questions: AllQuestions = AllQuestions()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        intent?.let{
-            val myText = it.getStringExtra("FROM_SCORE")
-            toScoreActivity.setText(myText)
-        }
 
 
         buttonToScoreActivity.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
 
                 Intent(baseContext, ScoreActivity::class.java).also { scoreActivity ->
-                    scoreActivity.putExtra("FROM_MAIN", toScoreActivity.getText().toString())
+                    scoreActivity.putExtra("FROM_MAIN", score.toString())
                     startActivity(scoreActivity)
 
                 }
@@ -54,17 +56,45 @@ class MainActivity : AppCompatActivity() {
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_question)
         questionText = findViewById(R.id.textView2)
+        scoreText = findViewById((R.id.score_text))
+        scoreText?.setText("Score: $score")
 
         // set onClick listeners for the buttons
         trueButton?.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?){
-                Toast.makeText(baseContext, "Clicked True Button", Toast.LENGTH_SHORT).show()
+                if (questions.allQuestions[nextQuestion.getIndex()].isTrue){
+                    score = total_score.inc()
+                    scoreText?.setText("Score: $score")
+                    Log.i("BUGGED", nextQuestion.getIndex().toString())
+                    Log.i("BUGGEDSC", score.toString())
+                    Toast.makeText(baseContext, "Correct", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    score = total_score.dec()
+                    scoreText?.setText("Score: $score")
+                    Toast.makeText(baseContext, "Incorrect", Toast.LENGTH_SHORT).show()
+                }
+                val nextQuestionIndex = nextQuestion.linearNextQuestion()
+                questionText?.setText(nextQuestionIndex)
             }
         })
 
         falseButton?.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?){
-                Toast.makeText(baseContext, "Clicked False Button", Toast.LENGTH_SHORT).show()
+                if (questions.allQuestions[nextQuestion.getIndex()].isTrue){
+                    score = total_score.dec()
+                    scoreText?.setText("Score: $score")
+                    Log.i("BUGGED", nextQuestion.getIndex().toString())
+                    Log.i("BUGGEDSC", score.toString())
+                    Toast.makeText(baseContext, "Incorrect", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    score = total_score.inc()
+                    scoreText?.setText("Score: $score")
+                    Toast.makeText(baseContext, "Correct", Toast.LENGTH_SHORT).show()
+                }
+                val nextQuestionIndex = nextQuestion.linearNextQuestion()
+                questionText?.setText(nextQuestionIndex)
             }
         })
 

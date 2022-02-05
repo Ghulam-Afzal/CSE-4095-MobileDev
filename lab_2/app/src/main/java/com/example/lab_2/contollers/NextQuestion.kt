@@ -9,6 +9,9 @@ class NextQuestion {
     private var question: Int = 0
     private val total_qs: Int = allQestions.allQuestions.size
 
+    public fun getIndex (): Int {
+           return (question) % total_qs
+    }
 
     public fun linearNextQuestion(): Int {
         question = (question + 1) % total_qs

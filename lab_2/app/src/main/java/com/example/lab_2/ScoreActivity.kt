@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 
 class ScoreActivity : AppCompatActivity() {
 
-    private val toMainActivity: EditText
-        get() = findViewById(R.id.to_main_activity)
+    private val score: TextView
+        get() = findViewById(R.id.score_text)
+
+    var score_activity_label: TextView? = null
 
     private val buttonToMainActivity: Button
         get() = findViewById(R.id.button_to_main_activity)
@@ -19,18 +21,16 @@ class ScoreActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_score)
 
-
-
+        score_activity_label = findViewById(R.id.score_activity_label)
         intent?.let {
             val myStr = it.getStringExtra("FROM_MAIN")
-            toMainActivity.setText(myStr)
+            score_activity_label?.setText("FINAL SCORE: $myStr")
         }
 
         buttonToMainActivity.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
-                Intent(baseContext,MainActivity::class.java).also{
+                Intent(baseContext, MainActivity::class.java).also{
                         mainActivity ->
-                    mainActivity.putExtra("FROM_SCORE",toMainActivity.getText().toString())
                     startActivity(mainActivity)
                 }
             }
