@@ -1,6 +1,7 @@
 package com.example.k2022_03_08_rv.model
 
 import android.media.AudioAttributes
+import android.media.MediaDrm
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 
@@ -17,27 +18,11 @@ class MyMediaPlayer {
                     .build()
             )
         }
-        //mediaPlayer.setOnCompletionListener {
-        //    it.release()
-        //}
-        //setAndPrepareRadioLink(url)
-    }
-
-    private fun setAndPrepareRadioLink(url: String) {
-        with(mediaPlayer) {
-            reset()
-            setDataSource(url)
-            prepareAsync()
-        }
     }
 
     fun pause() {
         mediaPlayer.pause()
         mediaPlayer.reset()
-    }
-
-    fun start() {
-        mediaPlayer.start()
     }
 
     fun prepareAndPlayStation(uri: String) {
