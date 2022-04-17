@@ -16,9 +16,9 @@ class MediaServices: Service() {
     private lateinit var serviceLooper: Looper
     private lateinit var serviceHandler: ServiceHandler
 
-    val myMediaPlayerAudio: MyMediaPlayer = MyMediaPlayer()
+    private val myMediaPlayerAudio: MyMediaPlayer = MyMediaPlayer()
     val myMediaPlayerVideo: MyMediaPlayer = MyMediaPlayer()
-    var whatMedia: Int = 0
+    private var whatMedia: Int = 0
 
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -44,18 +44,18 @@ class MediaServices: Service() {
     }
 
     fun sendMessagge(message: Message, what: Int) {
-        serviceHandler?.obtainMessage().also { msg ->
+        serviceHandler.obtainMessage().also { msg ->
             msg.arg1 = what
-            serviceHandler?.sendMessage(msg)
+            serviceHandler.sendMessage(msg)
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        serviceHandler?.obtainMessage().also { msg ->
+        serviceHandler.obtainMessage().also { msg ->
             msg.arg1 = startId
-            serviceHandler?.sendMessage(msg)
+            serviceHandler.sendMessage(msg)
 
         }
         return START_STICKY
@@ -65,7 +65,7 @@ class MediaServices: Service() {
         whatMedia = svcs
     }
 
-    var binder = LocalBinder()
+    private var binder = LocalBinder()
 
     override fun onBind(sevice: Intent?): IBinder? {
         return binder
@@ -76,9 +76,7 @@ class MediaServices: Service() {
         return value
     }
 
-    fun radioToggle() {
-
-        val link: String = "http://stream.whus.org:8000/whusfm"
+    fun radioToggle(link: String) {
 
         if (radioOn) {
             myMediaPlayerAudio.pause()

@@ -1,19 +1,19 @@
 package com.example.k2022_04_04c
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.media.MediaDrm
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.IBinder
-import android.os.Message
 import android.view.SurfaceHolder
 import android.view.WindowManager
 import android.widget.*
 import com.example.k2022_04_04c.Services.MediaServices
+import java.util.Calendar.SECOND
 
 lateinit var mediaServices: MediaServices
 private var bound: Boolean = false
@@ -28,6 +28,13 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
     private lateinit var videoToggle: Button
     private lateinit var mediaController: MediaController
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var totalTime: TextView
+    private lateinit var seekBar: SeekBar
+    private lateinit var textProgress: TextView
+    private lateinit var runnable: Runnable
+    private lateinit var radio2Toggle: Button
+    private lateinit var radio3Toggle: Button
+    private var handler = Handler(Looper.getMainLooper())
     private var videoOn: Boolean = false
     private var firstTimeOn: Boolean = true
 
@@ -40,22 +47,41 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         radioToggle = findViewById(R.id.radio_toggle_button)
         videoView = findViewById(R.id.videoView)
         videoToggle = findViewById(R.id.video_toggle_button)
+        seekBar = findViewById(R.id.seekBar)
+        textProgress = findViewById(R.id.textView2)
+        totalTime = findViewById(R.id.textView)
+        radio2Toggle = findViewById(R.id.radio_toggle_button2)
+        radio3Toggle = findViewById(R.id.radio_toggle_button3)
 
         mediaController = MediaController(this)
         mediaController.setAnchorView(videoView)
+        videoView.holder.addCallback(this)
         videoView.setMediaController(mediaController)
 
         videoView.holder.addCallback(this)
 
         mediaPlayer = MediaPlayer()
         mediaPlayer.setOnPreparedListener(this)
+        seekBar.setOnSeekBarChangeListener(this)
 
         radioToggle.setOnClickListener{
             val value = mediaServices.getInt()
             message.what = 1
-            mediaServices.radioToggle()
+            mediaServices.radioToggle("http://stream.whus.org:8000/whusfm")
             mediaServices.SelectMedia(1)
             mediaServices.sendMessagge(message,1)
+            Toast.makeText(applicationContext,"Hello: $value", Toast.LENGTH_SHORT).show()
+        }
+
+        radio2Toggle.setOnClickListener{
+            val value = mediaServices.getInt()
+            mediaServices.radioToggle("http://www.radioeins.de/livemp3")
+            Toast.makeText(applicationContext,"Hello: $value", Toast.LENGTH_SHORT).show()
+        }
+
+        radio3Toggle.setOnClickListener{
+            val value = mediaServices.getInt()
+            mediaServices.radioToggle("https://kmojfm.streamguys1.com/live-mp3")
             Toast.makeText(applicationContext,"Hello: $value", Toast.LENGTH_SHORT).show()
         }
 
@@ -105,9 +131,28 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
 
     }
 
-    // functions
-    override fun onPrepared(mediaPlayer: MediaPlayer) {
-        mediaPlayer.start()
+    private fun timeInString(seconds: Int): String {
+        return String.format(
+            "%02d:%02d",
+            (seconds / 3600 * 60 + ((seconds % 3600) / 60)),
+            (seconds % 60)
+        )
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun initializeSeekBar() {
+        seekBar.max = mediaPlayer.seconds
+        textProgress.text = "00:00"
+        totalTime.text = timeInString(mediaPlayer.seconds)
+    }
+
+    private fun updateSeekBar() {
+        runnable = Runnable {
+            textProgress.text = timeInString(mediaPlayer.currentSeconds)
+            seekBar.progress = mediaPlayer.currentSeconds
+            handler.postDelayed(runnable, SECOND.toLong())
+        }
+        handler.postDelayed(runnable, SECOND.toLong())
     }
 
     override fun onDrmInfo(mediaPlayer: MediaPlayer, drmInfo: MediaPlayer.DrmInfo?) {
@@ -122,6 +167,12 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 provideKeyResponse(null, keyRequest.data)
             }
         }
+    }
+
+    override fun onPrepared(mediaPlayer: MediaPlayer?) {
+        initializeSeekBar()
+        updateSeekBar()
+        mediaPlayer?.start()
     }
 
     override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
@@ -142,8 +193,16 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         TODO("Not yet implemented")
     }
 
-    override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-        TODO("Not yet implemented")
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(runnable)
+        mediaPlayer.release()
+        mediaPlayer.releaseDrm()
+    }
+
+    override fun onProgressChanged(p0: SeekBar?, progress: Int, fromUser: Boolean) {
+        if (fromUser)
+            mediaPlayer.seekTo(progress * SECOND)
     }
 
     override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -154,4 +213,13 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         TODO("Not yet implemented")
     }
 
+    private val MediaPlayer.seconds: Int
+        get() {
+            return this.duration / SECOND
+        }
+
+    private val MediaPlayer.currentSeconds: Int
+        get() {
+            return this.currentPosition / SECOND
+        }
 }
